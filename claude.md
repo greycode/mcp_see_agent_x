@@ -97,3 +97,5 @@ dify plugin package ./your_plugin/
 - Always validate tool_instance existence before invocation
 - Implement proper logging hierarchy for complex workflows
 
+
+- 总是参考 @docs\agent_plugin.md 中的 agent 插件开发指南

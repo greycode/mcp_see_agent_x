@@ -42,6 +42,7 @@ class ReActParams(BaseModel):
     mcp_servers_config: str | None
     mcp_resources_as_tools: bool = False
     mcp_prompts_as_tools: bool = False
+    raw_react_prompt: str | None
     maximum_iterations: int = 3
 
 
@@ -59,6 +60,7 @@ class ReActAgentStrategy(AgentStrategy):
         super().__init__(runtime, session)
         self.query = ""
         self.instruction = ""
+        self.raw_react_prompt = ""
         self.history_prompt_messages = []
         self.prompt_messages_tools = []
 
@@ -68,15 +70,19 @@ class ReActAgentStrategy(AgentStrategy):
 
     @property
     def _system_prompt_message(self) -> SystemPromptMessage:
-        prompt_entity = AgentPromptEntity(
-            first_prompt=REACT_PROMPT_TEMPLATES["english"]["chat"]["prompt"],
-            next_iteration=REACT_PROMPT_TEMPLATES["english"]["chat"][
-                "agent_scratchpad"
-            ],
-        )
-        if not prompt_entity:
-            raise ValueError("Agent prompt configuration is not set")
-        first_prompt = prompt_entity.first_prompt
+        # Use custom prompt if provided, otherwise use default template
+        if self.raw_react_prompt and self.raw_react_prompt.strip():
+            first_prompt = self.raw_react_prompt
+        else:
+            prompt_entity = AgentPromptEntity(
+                first_prompt=REACT_PROMPT_TEMPLATES["english"]["chat"]["prompt"],
+                next_iteration=REACT_PROMPT_TEMPLATES["english"]["chat"][
+                    "agent_scratchpad"
+                ],
+            )
+            if not prompt_entity:
+                raise ValueError("Agent prompt configuration is not set")
+            first_prompt = prompt_entity.first_prompt
 
         system_prompt = (
             first_prompt.replace("{{instruction}}", self.instruction)
@@ -111,6 +117,7 @@ class ReActAgentStrategy(AgentStrategy):
         # Init parameters
         self.query = react_params.query
         self.instruction = react_params.instruction or self.instruction
+        self.raw_react_prompt = react_params.raw_react_prompt
         agent_scratchpad = []
         iteration_step = 1
         max_iteration_steps = react_params.maximum_iterations
@@ -496,14 +503,17 @@ class ReActAgentStrategy(AgentStrategy):
             try:
                 tool_call_args = json.loads(tool_call_args)
             except json.JSONDecodeError as e:
-                params = [
-                    param.name
-                    for param in tool_instance.parameters
-                    if param.form == ToolParameter.ToolParameterForm.LLM
-                ]
-                if len(params) > 1:
-                    raise ValueError("tool call args is not a valid json string") from e
-                tool_call_args = {params[0]: tool_call_args} if len(params) == 1 else {}
+                if tool_instance is not None:
+                    params = [
+                        param.name
+                        for param in tool_instance.parameters
+                        if param.form == ToolParameter.ToolParameterForm.LLM
+                    ]
+                    if len(params) > 1:
+                        raise ValueError("tool call args is not a valid json string") from e
+                    tool_call_args = {params[0]: tool_call_args} if len(params) == 1 else {}
+                else:
+                    pass
 
         tool_invoke_parameters = {}
         try:

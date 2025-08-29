@@ -1,12 +1,12 @@
 identity:
-  author: junjiem
-  name: mcp_see_agent
+  author: calvin
+  name: mcp_see_agent_x
   label:
     en_US: Support MCP Tools Agent
-    zh_Hans: 支持 MCP 工具的 Agent
+    zh_Hans: 支持 MCP 工具的 Agent（定制）
   description:
     en_US: Support MCP Tools Agent
-    zh_Hans: 支持 MCP 工具的 Agent
+    zh_Hans: 支持 MCP 工具的 Agent（定制）
   icon: icon.svg
 strategies:
   - strategies/function_calling.yaml

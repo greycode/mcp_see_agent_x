@@ -1,9 +1,9 @@
 identity:
-  name: mcp_sse_ReAct
-  author: junjiem
+  name: mcp_sse_ReAct_x
+  author: calvin
   label:
     en_US: ReAct (Support MCP Tools)
-    zh_Hans: ReAct (支持 MCP 工具)
+    zh_Hans: ReAct (支持 MCP 工具 - 定制)
 description:
   en_US: ReAct is a basic strategy for agent, model will use the Dify and MCP tools provided to perform the task.
   zh_Hans: ReAct 是一个基本的 Agent 策略，模型将使用提供的 Dify 和 MCP 工具来执行任务。
@@ -54,6 +54,16 @@ parameters:
     help:
       en_US: "Fetch and call the preset MCP Prompts as Tools."
       zh_Hans: "将预设的 MCP Prompts 作为 Tools 返回和调用。"
+  - name: raw_react_prompt
+    type: string
+    required: false
+    label:
+      en_US: Raw ReAct Prompt
+      zh_Hans: 原始 ReAct 提示词
+    default: "Respond to the human as helpfully and accurately as possible.\n\n{{instruction}}\n\nYou have access to the following tools:\n\n{{tools}}\n\nUse a json blob to specify a tool by providing an action key (tool name) and an action_input key (tool input).\nValid \"action\" values: \"Final Answer\" or {{tool_names}}\n\nProvide only ONE action per $JSON_BLOB, as shown:\n\n```\n{\n  \"action\": $TOOL_NAME,\n  \"action_input\": $ACTION_INPUT\n}\n```\n\nFollow this format:\n\nQuestion: input question to answer\nThought: consider previous and subsequent steps\nAction:\n```\n$JSON_BLOB\n```\nObservation: action result\n... (repeat Thought/Action/Observation N times)\nThought: I know what to respond\nAction:\n```\n{\n  \"action\": \"Final Answer\",\n  \"action_input\": \"Final response to human\"\n}\n```\n\nBegin! Reminder to ALWAYS respond with a valid json blob of a single action. Use tools if necessary. Respond directly if appropriate. Format is Action:```$JSON_BLOB```then Observation:."
+    help:
+      en_US: "Custom ReAct prompt template. Use {{instruction}}, {{tools}}, {{tool_names}} placeholders for dynamic content."
+      zh_Hans: "自定义 ReAct 提示词模板。使用 {{instruction}}, {{tools}}, {{tool_names}} 占位符进行动态替换。"
   - name: instruction
     type: string
     required: false

@@ -1,9 +1,9 @@
 identity:
-  name: mcp_sse_function_calling
-  author: junjiem
+  name: mcp_sse_function_calling_x
+  author: calvin
   label:
     en_US: FunctionCalling (Support MCP Tools)
-    zh_Hans: FunctionCalling (支持 MCP 工具)
+    zh_Hans: FunctionCalling (支持 MCP 工具 - 定制)
 description:
   en_US: Function Calling is a basic strategy for agent, model will use the Dify and MCP tools provided to perform the task.
   zh_Hans: Function Calling 是一个基本的 Agent 策略，模型将使用提供的 Dify 和 MCP 工具来执行任务。
